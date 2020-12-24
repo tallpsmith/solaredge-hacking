@@ -1,0 +1,19 @@
+<html>
+<head>
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="node_modules/axios/dist/axios.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <ul>
+        <li v-for="item in meters" :key="item.type">
+            {{item.type}} : {{ item.values[1].value }}
+        </li>
+    </ul>
+</div>
+
+<script src="index.js"></script>
+</body>
+</html>
