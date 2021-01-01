@@ -1,17 +1,25 @@
 <html>
 <head>
-    <link rel="stylesheet" href="index.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <script src="node_modules/vue/dist/vue.js"></script>
+    <script src="node_modules/vue/dist/vue.js"></script>
     <script src="node_modules/axios/dist/axios.js"></script>
 </head>
 <body>
 
-<div id="app">
-    <ul>
-        <li v-for="item in meters" :key="item.type">
-            {{item.type}} : {{ item.values[1].value }}
-        </li>
-    </ul>
+<div id="app" class="container">
+    <div class="row"><div class="col-md-4">Production:</div><div class="col-md-4">{{ energy.Production }}</div></div>
+    <div class="row"><div class="col-md-4">Consumption:</div><div class="col-md-4">{{ energy.Consumption }}</div></div>
+
+    <div class="row"><div class="col-md-4">Self Consumption:</div><div class="col-md-4">{{ energy.SelfConsumption }}</div></div>
+    <div class="row"><div class="col-md-4">Feed In:</div><div class="col-md-4">{{ energy.FeedIn }}</div></div>
+----------
+
+    <div class="row"><div class="col-md-4">Energy Costs<sub>($ spent importing Energy)</sub></div><div class="col-md-4">${{ROI.energyCosts | currency}}</div></div>
+    <div class="row"><div class="col-md-4">Money Saved<sub>($ NOT spent, provided by Solar)</sub></div><div class="col-md-4">${{ ROI.moneySaved | currency}}</div></div>
+    <div class="row"><div class="col-md-4">Money Earned<sub>($ for Energy sent to the Grid)</sub></div><div class="col-md-4">${{ ROI.moneyEarned | currency }}</div></div>
+    <div class="row"><div class="col-md-4">Total Value<sub>(Savings + Earned)</sub></div><div class="col-md-4">${{ ROI.totalValue | currency }}</div></div>
+    <div class="row"><div class="col-md-4">Net ROI<sub>(Total Value - Energy Costs)</sub></div><div class="col-md-4">${{ ROI.totalReturn | currency }}</div></div>
 </div>
 
 <script src="index.js"></script>

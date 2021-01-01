@@ -1,0 +1,16 @@
+{
+  "name": "solaredge-roi",
+  "version": "1.0.0",
+  "description": "Calculates Return On Investment (ROI) of a Solar Edge PV system",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Paul Smith",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "bootstrap": "^4.5.3",
+    "vue": "^2.6.12"
+  }
+}
