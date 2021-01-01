@@ -1,35 +1,43 @@
-const axios = require('axios');
+const AXIOS = require('axios');
 
 module.exports = class SolarEdgeAPI {
     constructor(siteId, apiKey) {
         this.siteId = siteId;
         this.apiKey = apiKey;
-        this.startTime = '2020-12-23 00:00:00';
-        this.endTime = '2021-01-02 00:00:00';
+        this.startTime = '';
+        this.endTime = '';
+        this.axios = AXIOS.create({
+            baseURL: `https://monitoringapi.solaredge.com/site/${this.siteId}`
+        });
+        this.axios.get(`/dataPeriod.json?api_key=${this.apiKey}`)
+            .then((response) => {
+                var period = response.data.dataPeriod;
+                this.startTime = period.startDate + ' 00:00:00';
+                this.endTime = period.endDate + ' 23:59:59';
+            });
+
     }
 
-    getROIData()  {
-        axios.defaults.baseURL = `https://monitoringapi.solaredge.com/site/${this.siteId}`;
+    getROIData(callback) {
         var theEnergy = {
             Production: 0,
-                SelfConsumption: 0,
-                FeedIn:0,
-                Purchased: 0,
-                Consumption:0
+            SelfConsumption: 0,
+            FeedIn: 0,
+            Purchased: 0,
+            Consumption: 0
         };
-        //var calculate = this.calculate;
-        var getResponseHandler = function (response) {
-            //console.log(response);
-            var meters = response.data.energyDetails.meters;
-            meters.forEach(function (item, index) {
-                theEnergy[item.type] = item.values[0].value / 1000; // all values in kWh
-            });
-            //calculate();
-            console.log(theEnergy);
-        };
-        axios
+        return this.axios
             .get(`/energyDetails.json?api_key=${this.apiKey}&timeUnit=YEAR&startTime=${this.startTime}&endTime=${this.endTime}`)
-            .then(getResponseHandler)
+            .then((response) => {
+                var meters = response.data.energyDetails.meters;
+                meters.forEach(function (item, index) {
+                    var total = 0;
+                    item.values.forEach((item, index) => total += item.value / 1000); // TODO need to be sure of the Units are still "Wh"
+                    theEnergy[item.type] = total;
+                });
+                return theEnergy;
+            })
+            .then(callback)
             .catch((error) => console.log(error));
     }
 };
