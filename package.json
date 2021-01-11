@@ -4,7 +4,8 @@
   "description": "Calculates Return On Investment (ROI) of a Solar Edge PV system",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "node_modules/http-server/bin/http-server"
   },
   "author": "Paul Smith",
   "license": "ISC",
@@ -16,6 +17,7 @@
     "vue": "^2.6.12"
   },
   "devDependencies": {
+    "http-server": "^0.12.3",
     "jest": "^26.6.3"
   }
 }
