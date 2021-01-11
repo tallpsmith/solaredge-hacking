@@ -8,6 +8,10 @@
 <body>
 
 <div id="app" class="container">
+    <input type="text" v-model="solarEdge.siteId" placeholder="Site ID" />
+    <input type="text" v-model="solarEdge.APIKey" placeholder="API Key" />
+    <button v-on:click="calculate()" >Calculate</button>
+
     <div class="row"><div class="col-md-4">Production:</div><div class="col-md-4">{{ energy.Production }}</div></div>
     <div class="row"><div class="col-md-4">Consumption:</div><div class="col-md-4">{{ energy.Consumption }}</div></div>
 

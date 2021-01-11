@@ -1,5 +1,5 @@
-Vue.filter('currency', function(value){
-    let val = (value/1).toFixed(2).replace('.', '.')
+Vue.filter('currency', function (value) {
+    let val = (value / 1).toFixed(2).replace('.', '.')
     return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 });
 
@@ -22,10 +22,10 @@ var vue = new Vue({
     data() {
         return {
             solarEdge: {
-                siteId: 1978596,
-                APIKey: 'ZY1Z0BQ5692HFXCPL3CD3HB7P5HU4WEU',
+                siteId: '',
+                APIKey: '',
             },
-            queryParams:{
+            queryParams: {
                 startTime: '2020-01-01 00:00:00',
                 endTime: '2020-12-31 00:00:00',
             },
@@ -37,9 +37,9 @@ var vue = new Vue({
             energy: {
                 Production: 0,
                 SelfConsumption: 0,
-                FeedIn:0,
+                FeedIn: 0,
                 Purchased: 0,
-                Consumption:0
+                Consumption: 0
             },
             ROI: {
                 energyCosts: 0,
@@ -50,30 +50,35 @@ var vue = new Vue({
             }
         }
     },
-    methods:{
-        calculate(){
-            this.ROI.moneyEarned =  this.energy.FeedIn * this.costs.feedInTariff /100; // measured in $
-            this.ROI.moneySaved = this.energy.SelfConsumption * this.costs.energyPrice / 100;
-            this.ROI.totalValue = this.ROI.moneySaved + this.ROI.moneyEarned;
-            this.ROI.energyCosts = (this.energy.Purchased * this.costs.energyPrice) / 100;
-            this.ROI.totalReturn = this.ROI.totalValue - this.ROI.energyCosts;
-      }
+    methods: {
+        calculate() {
+            this.persist();
+            axios.defaults.baseURL = `https://monitoringapi.solaredge.com/site/${this.solarEdge.siteId}`;
+            var theEnergy = this.energy;
+            axios
+                .get(`/energyDetails?api_key=${this.solarEdge.APIKey}&timeUnit=YEAR&startTime=${this.queryParams.startTime}&endTime=${this.queryParams.endTime}`)
+                .then((response) => {
+                    var meters = response.data.energyDetails.meters;
+                    meters.forEach(function (item, index) {
+                        theEnergy[item.type] = item.values[0].value / 1000; // all values in kWh
+                    });
+
+                    this.ROI.moneyEarned = this.energy.FeedIn * this.costs.feedInTariff / 100; // measured in $
+                    this.ROI.moneySaved = this.energy.SelfConsumption * this.costs.energyPrice / 100;
+                    this.ROI.totalValue = this.ROI.moneySaved + this.ROI.moneyEarned;
+                    this.ROI.energyCosts = (this.energy.Purchased * this.costs.energyPrice) / 100;
+                    this.ROI.totalReturn = this.ROI.totalValue - this.ROI.energyCosts;
+                });
+        },
+        persist() {
+            localStorage.solarEdge = JSON.stringify(this.solarEdge);
+        }
     },
     mounted() {
-        axios.defaults.baseURL = `https://monitoringapi.solaredge.com/site/${this.solarEdge.siteId}`;
-        var theEnergy = this.energy;
-        var calculate = this.calculate;
-        getResponseHandler = function(response) {
-            //console.log(response);
-            var meters = response.data.energyDetails.meters;
-            meters.forEach(function(item,index){
-                theEnergy[item.type] = item.values[0].value /1000; // all values in kWh
-            });
-            calculate();
-        };
-        axios
-            .get(`/energyDetails?api_key=${this.solarEdge.APIKey}&timeUnit=YEAR&startTime=${this.queryParams.startTime}&endTime=${this.queryParams.endTime}`)
-            .then(getResponseHandler);
+        console.log('Mounted: solarEdge=' + JSON.stringify(localStorage.solarEdge));
+        if (localStorage.getItem('solarEdge')) {
+            this.solarEdge = JSON.parse(localStorage.getItem('solarEdge'));;
+        }
     }
 });
 
