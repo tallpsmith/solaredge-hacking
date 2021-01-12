@@ -20,7 +20,7 @@ api.currentPowerFlow().then((flow) => {
         let energyInfo = resolved;
         var roiCalc = new ROICalculator(costs, energyInfo.duration);
         console.log('ROI:' + JSON.stringify(roiCalc.calculate(energyInfo.energy), null, 2));
-        console.log('Ok to use High Powered Device?: ' + sufficientSolarChecker.isOkToUseHighPoweredDevices(energyInfo, flow));
+        console.log('Ok to use High Powered Device?: ' + sufficientSolarChecker.isOkToUseHighPoweredDevices(flow));
     });
 }).catch((error)=>{
     console.log(error);

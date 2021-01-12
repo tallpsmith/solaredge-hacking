@@ -2,7 +2,7 @@
 
 module.exports = class SufficientSolarChecker{
 
-    isOkToUseHighPoweredDevices(energy, powerflow) {
+    isOkToUseHighPoweredDevices(powerflow) {
         if(powerflow.state === 'exporting'){
             if(powerflow.power > 2.0){
                 return true;
