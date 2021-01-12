@@ -32,7 +32,7 @@ app.get('/solarEdge/roi', (req, res) => {
 app.get('/solarEdge/highPowered', (req, res) => {
     api.currentPowerFlow().then((flow) => {
         res.status(200).json({
-            'isOkToUseHighPoweredDevices': sufficientSolarChecker.isOkToUseHighPoweredDevices(flow)
+            'isOkToUseHighPoweredDevices': sufficientSolarChecker.isOkToUseHighPoweredDevices(flow),
             'flow': flow,
         });
     });
