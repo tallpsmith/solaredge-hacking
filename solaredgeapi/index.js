@@ -32,6 +32,33 @@ module.exports = class SolarEdgeAPI {
             ).catch((error) => console.log(error));
     }
 
+    getDetailedEnergyInfo(){
+        const timeFormat =  'YYYY-MM-DD HH:mm:ss';
+
+        var monthStart = moment().startOf("Month").format(timeFormat);
+        //var monthEnd = moment().endOf("Month").format(timeFormat);
+        var monthEnd = moment().startOf("Month").endOf("Day").format(timeFormat);
+
+        //console.log( monthStart, monthEnd);
+        var data={};
+        return this.axios
+            .get(`/energyDetails.json?api_key=${this.apiKey}&timeUnit=QUARTER_OF_AN_HOUR&startTime=${monthStart}&endTime=${monthEnd}`)
+            .then((response) => {
+                //console.log(response.data.energyDetails.meters);
+                response.data.energyDetails.meters.forEach(function(meter){
+                        var type = meter.type;
+                        meter.values.forEach(function(value){
+                            if(typeof data[value.date] === 'undefined'){
+                                data[value.date]={};
+                            }
+                            data[value.date][type] = value.value;
+                        });
+                });
+                return data;
+            }).catch((error)=>{
+                console.log(error);
+            });
+    }
     getEnergyInfo() {
         var energyInfo = {
             duration: 0,
